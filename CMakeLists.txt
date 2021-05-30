@@ -8,35 +8,33 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(minivitatv)
+project(superVitaTV)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -Wall -O3 -nostdlib")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_executable(shell
-  shell.c
+  src/shell.c
 )
 
 target_link_libraries(shell
   taihen_stub
+  SceLibKernel_stub
+  SceVshBridge_stub
 )
 
-vita_create_self(minivitatv.suprx shell CONFIG exports.yml UNSAFE)
+vita_create_self(${PROJECT_NAME}.suprx shell CONFIG ${PROJECT_NAME}.yml UNSAFE)
 
 add_executable(kernel
-  kernel.c
+  src/kernel.c
 )
 
 target_link_libraries(kernel
-  SceIofilemgrForDriver_stub
-  SceSysclibForDriver_stub
-  SceThreadmgrForDriver_stub
+  SceDebugForDriver_stub
   taihenForKernel_stub
-  taihenModuleUtils_stub
-  SceSysmemForDriver_stub
-  SceSysrootForDriver_stub
-  SceProcessmgrForDriver_stub
+  taihen_stub
 )
 
-vita_create_self(minivitatv.skprx kernel CONFIG exports.yml UNSAFE)
+vita_create_self(${PROJECT_NAME}.skprx kernel CONFIG ${PROJECT_NAME}.yml UNSAFE)
+
